@@ -1,0 +1,181 @@
+* Advent of Code 2020
+** DONE Day 1: Report Repair[2/2]
+   - [X] Part 1:
+     #+BEGIN_SRC typescript
+       import { readFileSync } from 'fs';
+       const input: string = readFileSync('./2020/day1/input', 'utf-8');
+       const inpArr: string[] = input.split("\n").filter(x => x);
+
+       let res: number = 1;
+
+       for (var i = 0; i < inpArr.length - 1; i++) {
+           for (var j = i + 1; j < inpArr.length; j++) {
+               if (Number(inpArr[i]) + Number(inpArr[j]) === 2020) {
+                   res *= Number(inpArr[i]) * Number(inpArr[j]);
+               }
+           }
+       }
+
+       console.log(res)
+     #+END_SRC
+
+     #+RESULTS:
+     : 1018944
+   - [X] Part 2:
+     #+BEGIN_SRC typescript
+       import { readFileSync } from 'fs';
+       const input: string = readFileSync('./2020/day1/input', 'utf-8');
+       const inpArr: string[] = input.split("\n").filter(x => x);
+
+       let res: number = 1;
+
+       for (var i = 0; i < inpArr.length - 2; i++) {
+           for (var j = i + 1; j < inpArr.length - 1; j++) {
+               for (var k = j + 1; k < inpArr.length; k++){
+                   if (Number(inpArr[i]) + Number(inpArr[j]) + Number(inpArr[k]) === 2020) {
+                       res *= Number(inpArr[i]) * Number(inpArr[j]) * Number(inpArr[k]);
+                   }
+               }
+           }
+       }
+
+       console.log(res)
+     #+END_SRC
+
+     #+RESULTS:
+     : 8446464
+** DONE Day 2: Password Philosophy
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day2/input', 'utf-8');
+      const inpArr: string[] = input.split("\n").filter(x => x);
+
+      let numberValid: number = 0;
+
+      interface PWPolicy {
+          charToMatch: string;
+          minOccur: number;
+          maxOccur: number;
+          pw: string;
+      }
+
+      inpArr.forEach(inpLine => {
+          const pwPolicyArr: string[] = inpLine.split(" ");
+          let pwPolicy: PWPolicy = {charToMatch: String(pwPolicyArr[1]).slice(0, -1),
+                                    minOccur: parseInt(pwPolicyArr[0].split("-")[0]),
+                                    maxOccur: parseInt(pwPolicyArr[0].split("-")[1]),
+                                    pw: String(pwPolicyArr[2])};
+
+          const re = new RegExp(`[${pwPolicy.charToMatch}]`, "g");
+
+          if (pwPolicy.pw.match(re)?.length >= pwPolicy.minOccur && pwPolicy.pw.match(re)?.length <= pwPolicy.maxOccur) {
+              ++numberValid;
+          }
+      });
+
+      console.log(numberValid)
+    #+END_SRC
+
+    #+RESULTS:
+    : 524
+
+** DONE Day 3: Toboggan Trajectory
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day3/input', 'utf-8');
+      const inpArr: string[] = input.split("\n").filter(x => x);
+
+      interface SlopeParams {
+          xLength: number;
+          yLength: number;
+          tree: string;
+          openSquare: string;
+      }
+
+      interface TobboganParams {
+          numberEncounters: number;
+          xPos: number;
+          xMoveSpeed: number;
+      }
+
+
+      const sParams: SlopeParams = {
+          xLength: inpArr[0].length,
+          yLength: inpArr.length,
+          tree: "#",
+          openSquare: "."
+      };
+
+      let tParams: TobboganParams = {
+          xMoveSpeed: 3,
+          numberEncounters: 0,
+          xPos: 0
+      };
+
+      inpArr.forEach(line => {
+          if(line.charAt(tParams.xPos) === sParams.tree){
+              ++tParams.numberEncounters;
+          }
+          tParams.xPos = (tParams.xPos + tParams.xMoveSpeed ) % sParams.xLength;
+      });
+
+      console.log(tParams.numberEncounters)
+    #+END_SRC
+
+    #+RESULTS:
+    : 181
+
+** DONE Day 4: Passport Processing
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day4/input', 'utf-8');
+      const inpArr: string[] = input.split("\n");
+
+      type PassControl = {
+          readonly reqFields: string[];
+          validCounter: number;
+      }
+
+      type Passport = {
+          detectedFields: string[]
+      };
+
+      let pControl: PassControl = {
+          reqFields: ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"],
+          validCounter: 0
+      }
+
+      let pass: Passport = { detectedFields: [] };
+
+      inpArr.forEach((line: string) => {
+          if (line === "") {
+              if(pControl.reqFields.every(x => {
+                  return pass.detectedFields.includes(x)
+              })) {
+                  pControl.validCounter++;
+              }
+
+              pass = { detectedFields: [] };
+          }
+          else {
+              const keyVals: string[] = line.split(" ")
+              keyVals.forEach(kv => {
+                  var key: string = kv.split(":")[0];
+                  pass.detectedFields.push(key);
+              });
+          }
+
+
+      });
+
+      console.log(pControl.validCounter)
+
+    #+END_SRC
+
+    #+RESULTS:
+    : 239
+
+** TODO Day 5: Binary Boarding
