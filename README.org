@@ -24,6 +24,7 @@
 
     #+RESULTS:
     : 1018944
+
 *** Part 2
     #+BEGIN_SRC typescript
       import { readFileSync } from 'fs';
@@ -218,5 +219,3 @@
 
     #+RESULTS:
     : 239
-
-** Day 5: Binary Boarding
