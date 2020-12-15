@@ -2,7 +2,10 @@
 #+OPTIONS: num:nil
 
 * Advent of Code 2020
-** DONE Day 1: Report Repair
+  :PROPERTIES:
+  :header-args: :exports both
+  :END:
+** Day 1: Report Repair
 *** Part 1
     #+BEGIN_SRC typescript
       import { readFileSync } from 'fs';
@@ -48,7 +51,7 @@
 
     #+RESULTS:
     : 8446464
-** DONE Day 2: Password Philosophy
+** Day 2: Password Philosophy
 *** Part 1
     #+BEGIN_SRC typescript
       import { readFileSync } from 'fs';
@@ -83,8 +86,44 @@
 
     #+RESULTS:
     : 524
+*** Part 2
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day2/input', 'utf-8');
+      const inpArr: string[] = input.split("\n").filter(x => x);
 
-** DONE Day 3: Toboggan Trajectory
+      let numberValid: number = 0;
+
+      interface PWPolicy {
+          charToMatch: string;
+          firstPos: number;
+          secondPos: number;
+          pw: string;
+      }
+
+      const verifyCharXOR = (x: string, y: string, compChar: string): boolean => {
+          return (x === compChar) ? !(y === compChar) : (y === compChar);
+      }
+
+      inpArr.forEach(inpLine => {
+          const pwPolicyArr: string[] = inpLine.split(" ");
+          let pwPolicy: PWPolicy = {charToMatch: String(pwPolicyArr[1]).slice(0, -1),
+                                    firstPos: parseInt(pwPolicyArr[0].split("-")[0]),
+                                    secondPos: parseInt(pwPolicyArr[0].split("-")[1]),
+                                    pw: String(pwPolicyArr[2])};
+
+          if(verifyCharXOR(pwPolicy.pw.charAt(pwPolicy.firstPos - 1), pwPolicy.pw.charAt(pwPolicy.secondPos - 1), pwPolicy.charToMatch)){
+              ++numberValid;
+          }
+      });
+
+      console.log(numberValid)
+    #+END_SRC
+
+    #+RESULTS:
+    : 485
+
+** Day 3: Toboggan Trajectory
 *** Part 1
     #+BEGIN_SRC typescript
       import { readFileSync } from 'fs';
@@ -131,7 +170,7 @@
     #+RESULTS:
     : 181
 
-** DONE Day 4: Passport Processing
+** Day 4: Passport Processing
 *** Part 1
     #+BEGIN_SRC typescript
       import { readFileSync } from 'fs';
@@ -182,4 +221,4 @@
     #+RESULTS:
     : 239
 
-** TODO Day 5: Binary Boarding
+** Day 5: Binary Boarding
