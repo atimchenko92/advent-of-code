@@ -280,3 +280,110 @@
 
     #+RESULTS:
     : 239
+
+*** Part 2
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day4/input', 'utf-8');
+      const inpArr: string[] = input.split("\n");
+
+      enum ReqFields {
+          byr = "byr",
+          iyr = "iyr",
+          eyr = "eyr",
+          hgt = "hgt",
+          hcl = "hcl",
+          ecl = "ecl",
+          pid = "pid",
+      }
+
+      type Passport = {
+          detectedFields: string[],
+          hasInvalidFields: boolean;
+      };
+
+      let pValidCounter: number = 0;
+      let curPass: Passport = { detectedFields: [], hasInvalidFields: false };
+
+      const performFieldValidation = (field: string, val: string): boolean => {
+          if (field === "cid")
+              return true
+
+          const fieldCasted: ReqFields = ReqFields[field as keyof typeof ReqFields];
+          let re: RegExp;
+
+          switch (fieldCasted) {
+              case ReqFields.byr:
+                  re = new RegExp('^\\d{4}$');
+                  return re.test(val) && Number(val) >= 1920 && Number(val) <= 2002
+
+              case ReqFields.iyr:
+                  re = new RegExp('^\\d{4}$');
+                  return re.test(val) && Number(val) >= 2010 && Number(val) <= 2020
+
+              case ReqFields.eyr:
+                  re = new RegExp('^\\d{4}$');
+                  return re.test(val) && Number(val) >= 2020 && Number(val) <= 2030
+
+              case ReqFields.hgt:
+                  re = new RegExp('^(\\d+)(cm|in)$');
+                  var matchRes: RegExpMatchArray = val.match(re);
+                  if (matchRes) {
+                      if (matchRes[2] === "cm") {
+                          return Number(matchRes[1]) >= 150 && Number(matchRes[1]) <= 193
+                      } else if (matchRes[2] === "in") {
+                          return Number(matchRes[1]) >= 59 && Number(matchRes[1]) <= 76;
+                      }
+                  }
+                  return false;
+
+              case ReqFields.hcl:
+                  re = new RegExp('^#[0-9a-f]{6}$');
+                  return re.test(val);
+
+              case ReqFields.ecl:
+                  re = new RegExp('(amb|blu|brn|gry|grn|hzl|oth)');
+                  return re.test(val);
+
+              case ReqFields.pid:
+                  re = new RegExp('^\\d{9}$');
+                  return re.test(val);
+
+              default:
+                  return false;
+          }
+      }
+
+      inpArr.forEach((line: string) => {
+          if (line === "") {
+              if (!curPass.hasInvalidFields) {
+                  pValidCounter++;
+                  for (var enumVal in ReqFields) {
+                      if (!curPass.detectedFields.includes(enumVal)) {
+                          pValidCounter--;
+                          break;
+                      }
+                  }
+              }
+              curPass = { detectedFields: [], hasInvalidFields: false };
+          }
+          else if (!curPass.hasInvalidFields) {
+              const keyVals: string[] = line.split(" ")
+              keyVals.forEach(kv => {
+                  var kvs: string[] = kv.split(/:/);
+                  if (performFieldValidation(kvs[0], kvs[1])) {
+                      curPass.detectedFields.push(kvs[0]);
+                  } else {
+                      curPass.hasInvalidFields = true;
+                  }
+
+              });
+          }
+      });
+
+
+      console.log(pValidCounter)
+    #+END_SRC
+
+    #+RESULTS:
+    : 188
