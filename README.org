@@ -387,3 +387,62 @@
 
     #+RESULTS:
     : 188
+
+** Day 5: Binary Boarding
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+
+      const input: string = readFileSync('./2020/day5/input', 'utf-8');
+      const seatsBinary: string[] = input.split(/\n/).filter(Boolean).map((seatCode) => {
+          return seatCode
+              .replaceAll(/[F|L]/g, "0")
+              .replaceAll(/[B|R]/g, "1");
+      }).sort();
+
+      const maxSeatBinaryCode: string = seatsBinary[seatsBinary.length - 1];
+      const row: number = parseInt(maxSeatBinaryCode.slice(0, 7), 2);
+      const column: number = parseInt(maxSeatBinaryCode.slice(7, 10), 2);
+
+      console.log(row * 8 + column)
+    #+END_SRC
+
+    #+RESULTS:
+    : 880
+
+*** Part 2
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+
+      const getSeatID = (seatBinary: string) : number => {
+          const row: number = parseInt(seatBinary.slice(0, 7), 2);
+          const column: number = parseInt(seatBinary.slice(7, 10), 2);
+
+          return row * 8 + column;
+      }
+
+      const input: string = readFileSync('./2020/day5/input', 'utf-8');
+      const seatsBinary: string[] = input.split(/\n/).filter(Boolean).map((seatCode) => {
+          return seatCode
+              .replaceAll(/[F|L]/g, "0")
+              .replaceAll(/[B|R]/g, "1");
+      }).sort();
+
+      let prevSeat: number | null = null;
+
+      for(var seat of seatsBinary){
+          let curSeat: number = getSeatID(seat);
+
+          if( prevSeat !== null && curSeat - prevSeat === 2) {
+              console.log(curSeat - 1);
+              break;
+          }
+          else{
+              prevSeat = curSeat;
+          }
+      }
+
+    #+END_SRC
+
+    #+RESULTS:
+    : 731
