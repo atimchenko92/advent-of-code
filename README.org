@@ -1,7 +1,4 @@
 * Advent of Code 2020
-  :PROPERTIES:
-  :header-args: :exports both
-  :END:
 ** Day 1: Report Repair
 *** Part 1
     #+BEGIN_SRC typescript
@@ -446,3 +443,46 @@
 
     #+RESULTS:
     : 731
+
+** Day 6: Custom Customs
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+
+      console.time('Time taken')
+      const input: string = readFileSync('./2020/day6/input', 'utf-8');
+      let sumOfAnswers: number = 0;
+
+      input.split(/\n\n/).forEach(x => {
+          sumOfAnswers += new Set([...x.replace(/\n/g, "")]).size;
+      });
+      console.timeEnd("Time taken")
+      console.log(`Answer: ${sumOfAnswers}`);
+    #+END_SRC
+
+    #+RESULTS:
+    : Time taken: 1.529ms
+    : Answer: 6443
+*** Part 2
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+
+      console.time('Time taken')
+      const input: string = readFileSync('./2020/day6/input', 'utf-8');
+      let sumOfAnswers: number = 0;
+
+      input.split(/\n\n/).forEach(grp => {
+          const allAnswers = new Set([...grp.replace(/\n/g, "")]);
+          allAnswers.forEach(ans => {
+              if(grp.split(/\n/).filter(Boolean).every(persAns => persAns.includes(ans))){
+                  ++sumOfAnswers;
+              }
+          });
+      });
+      console.timeEnd('Time taken')
+      console.log(`Answer: ${sumOfAnswers}`);
+    #+END_SRC
+
+    #+RESULTS:
+    : Time taken: 8.232ms
+    : Answer: 3232
