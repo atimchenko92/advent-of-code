@@ -21,7 +21,7 @@
     #+END_SRC
 
     #+RESULTS:
-    : Time taken: 4.973ms
+    : Time taken: 4.558ms
     : 1018944
 
 *** Part 2
@@ -518,3 +518,126 @@
     #+RESULTS:
     : Time taken: 8.396ms
     : 3232
+
+** Day 7: Handy Haversacks
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day7/input', 'utf-8');
+
+      console.time('Time taken')
+
+      const bagOfInterest: string = "shiny gold";
+      const re1 = /^([\w\s]+) bags contain /;
+      const re2 = /(\d+) ([\w\s]+) bag[s]?/;
+      const re2_g = /(\d+) ([\w\s]+) bag[s]?/g;
+
+      type BagContainer = {
+          [k: string]: Set<string>;
+      };
+
+      let bagDict: BagContainer = {};
+      let ans: number = 0;
+
+      // Construct bag rules
+      input.split(/\n/).filter(Boolean).forEach(rule => {
+          let myMatches;
+
+          bagDict[rule.match(re1)[1]] = new Set();
+
+          if (re2.test(rule)) {
+              while ((myMatches = re2_g.exec(rule)) !== null) {
+                  bagDict[rule.match(re1)[1]].add(myMatches[2]);
+              }
+          }
+      });
+
+      const containsShinyGoldBags = (bag: string) => {
+          const bagContents: Set<string> = bagDict[bag];
+
+          if (bagContents.has(bagOfInterest)) {
+              return true;
+          } else {
+              for (let containedBag of bagContents.values()) {
+                  if (containsShinyGoldBags(containedBag)) {
+                      return true;
+                  }
+              }
+          }
+          return false;
+      }
+
+      // Seek for appropriate bags and count them
+      ans = Object.keys(bagDict).filter((x) => {
+          return containsShinyGoldBags(x);
+      }).length;
+
+      console.timeEnd('Time taken')
+      console.log(`Answer: ${ans}`);
+    #+END_SRC
+
+    #+RESULTS:
+    : Time taken: 16.064ms
+    : Answer: 177
+
+*** Part 2
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day7/input', 'utf-8');
+
+      console.time('Time taken')
+
+      const bagOfInterest: string = "shiny gold";
+      const re1 = /^([\w\s]+) bags contain /;
+      const re2 = /(\d+) ([\w\s]+) bag[s]?/;
+      const re2_g = /(\d+) ([\w\s]+) bag[s]?/g;
+
+      type BagInfo = {
+          amount: number,
+          type: string;
+      };
+
+      type BagContainer = {
+          [k: string]: Set<BagInfo>;
+      };
+
+      let bagDict: BagContainer = {};
+      let ans: number = 0;
+
+      // Construct bag rules
+      input.split(/\n/).filter(Boolean).forEach(rule => {
+          let myMatches;
+
+          bagDict[rule.match(re1)[1]] = new Set();
+
+          if (re2.test(rule)) {
+              while ((myMatches = re2_g.exec(rule)) !== null) {
+                  bagDict[rule.match(re1)[1]].add({
+                      amount: parseInt(myMatches[1]),
+                      type: myMatches[2]
+                  });
+              }
+          }
+      });
+
+      const getBagsNumber = (bag: string): number => {
+          const bagContents: Set<BagInfo> = bagDict[bag];
+          let bagsNumerTotal: number = 0;
+
+          for (let containedBag of bagContents.values()) {
+              bagsNumerTotal += containedBag.amount;
+              bagsNumerTotal += getBagsNumber(containedBag.type) * containedBag.amount;
+          }
+
+          return bagsNumerTotal;
+      };
+
+      // Count all the bags needed for `bagOfInterest`
+      ans = getBagsNumber(bagOfInterest);
+      console.timeEnd('Time taken')
+      console.log(`Answer: ${ans}`);
+    #+END_SRC
+
+    #+RESULTS:
+    : Time taken: 3.86ms
+    : Answer: 34988
