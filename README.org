@@ -641,3 +641,51 @@
     #+RESULTS:
     : Time taken: 3.86ms
     : Answer: 34988
+
+** Day 8: Handlheld Halting
+*** Part 1
+    #+BEGIN_SRC typescript
+      import { readFileSync } from 'fs';
+      const input: string = readFileSync('./2020/day8/input', 'utf-8');
+
+      console.time('Time taken')
+
+      enum Opcode {
+          acc = "acc",
+          jmp = "jmp",
+          nop = "nop"
+      }
+
+      const execInstruction = (opcode: string, arg: number): number => {
+          const opcodeCasted: Opcode = Opcode[opcode as keyof typeof Opcode];
+
+          switch (opcodeCasted) {
+              case Opcode.acc:
+                  ans += arg;
+                  return 1;
+              case Opcode.jmp:
+                  return arg;
+              case Opcode.nop:
+                  return 1;
+          }
+      }
+
+      let ans: number = 0;
+      let currInstr: number = 0;
+      let instrVisited: Set<number> = new Set();
+      const instrList: string[] = input.split(/\n/).filter(Boolean);
+
+      while (!instrVisited.has(currInstr)) {
+          const cmd: string[] = instrList[currInstr].split(/\s/);
+
+          instrVisited.add(currInstr);
+          currInstr += execInstruction(cmd[0], parseInt(cmd[1]));
+      }
+
+      console.timeEnd('Time taken')
+      console.log(`Answer: ${ans}`);
+    #+END_SRC
+
+    #+RESULTS:
+    : Time taken: 0.474ms
+    : Answer: 1744
